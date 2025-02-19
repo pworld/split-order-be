@@ -1,5 +1,5 @@
 import { AppDataSource } from '../config/ormconfig';
-import { Item } from '../entities/Item';
+import { Item } from '../entities/Product';
 
 export const seedDatabase = async () => {
   const itemRepository = AppDataSource.getRepository(Item);
