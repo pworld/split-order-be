@@ -14,6 +14,7 @@ export class Product {
   @Column('int')
   weight: number;
 
+  // For future used if status is_checked needed for package selections
   @Column('boolean', { default: false })
   is_checked: boolean;
 }

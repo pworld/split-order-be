@@ -18,7 +18,11 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   async getProducts(): Promise<Product[]> {
-    return this.repository.find();
+    return this.repository.find( {
+      order: {
+        id: 'DESC', // Order by ID in descending order
+      },
+    });
   }
 
   async getItemsByIds(ids: number[]): Promise<Product[]> {
@@ -47,6 +51,6 @@ export class ProductRepositoryImpl implements ProductRepository {
 
   async deleteProduct(id: number): Promise<boolean> {
     const result = await this.repository.delete(id);
-    return !!result.affected;
+    return !!result.affected; // if error or null handle
   }
 }

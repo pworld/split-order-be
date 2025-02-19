@@ -33,7 +33,7 @@ export class ProductService {
     const courier_charge = await this.CourierChargeRepository.getCourierCharges();
 
     // Get Product from database
-    const all_items = await this.ProductRepository.getItemsByIds(selected_items_ids, );
+    const all_items = await this.ProductRepository.getItemsByIds(selected_items_ids);
 
     const selected_items = splitItemsIntoPackages(all_items, courier_charge);
 

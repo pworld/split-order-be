@@ -12,8 +12,8 @@ export const getProducts = async (req: Request, res: Response) => {
     const products = await productService.getProducts();
     res.json(products);
   } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).json({ error: 'Failed to place order' });
+    console.error('Error get product:', error);
+    res.status(500).json({ error: 'Failed to get product' });
   }
 };
 
@@ -24,8 +24,8 @@ export const setProduct = async (req: Request, res: Response) => {
     const product = await productService.setProduct(item);
     res.json(product);
   } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).json({ error: 'Failed to place order' });
+    console.error('Error set product:', error);
+    res.status(500).json({ error: 'Failed to set product' });
   }
   
 };
@@ -37,24 +37,21 @@ export const updateProduct = async (req: Request, res: Response) => {
     const product = await productService.updateProduct(item);
     res.json(product);
   } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).json({ error: 'Failed to place order' });
+    console.error('Error update product:', error);
+    res.status(500).json({ error: 'Failed to update product' });
   }
   
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log("----------------------");
-  console.log(req.params);
-  console.log(id);
-  console.log("----------------------");
+
   try {
     const is_deleted = await productService.deleteProduct(parseInt(id));
     res.json(is_deleted);
   } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).json({ error: 'Failed to place order' });
+    console.error('Error delete product:', error);
+    res.status(500).json({ error: 'Failed to delete product' });
   }
   
 };
@@ -66,7 +63,7 @@ export const countCharges = async (req: Request, res: Response) => {
     const calculate = await productService.countCharges(selected_items_ids);
     res.json(calculate);
   } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).json({ error: 'Failed to place order' });
+    console.error('Error count charges:', error);
+    res.status(500).json({ error: 'Failed to count charges' });
   }
 }

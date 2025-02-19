@@ -21,6 +21,7 @@ export type Package = {
  * Function to determine the courier charge based on weight.
  */
 function getCourierCharge(weight: number, weightChargeData: weightCharge[]): number {
+  // Search correct entry prices
   const charge_entry = weightChargeData.find(
     (entry) => weight >= entry.low && weight < entry.high
   );
@@ -86,21 +87,28 @@ function splitItemsIntoPackages(items: Product[], weightChargeData: weightCharge
  */
 function balanceWeights(packages: Package[], weightChargeData: weightCharge[]): void {
   const total_weight = packages.reduce((sum, p) => sum + p.totalWeight, 0);
+  // Use avg to avoid overloading
   const avg_weight = total_weight / packages.length;
 
   let adjustments = true;
   while (adjustments) {
     adjustments = false;
     for (let i = 0; i < packages.length - 1; i++) {
+
       if (Math.abs(packages[i].totalWeight - avg_weight) > 50) {
+
+        // if package heavier than avg, do weight reduction
+        // if package lighter than avg, add more weight
         let heavier = packages[i].totalWeight > avg_weight ? packages[i] : packages[i + 1];
         let lighter = heavier === packages[i] ? packages[i + 1] : packages[i];
 
+        // make sure heavier package does not go below avg_weight and lighter package does not exceed avg_weight 
         const transferableItem = heavier.items.find((item) =>
           heavier.totalWeight - item.weight >= avg_weight &&
           lighter.totalWeight + item.weight <= avg_weight
         );
 
+        // Moving item 
         if (transferableItem) {
           heavier.items = heavier.items.filter(it => it.id !== transferableItem.id);
           lighter.items.push(transferableItem);
