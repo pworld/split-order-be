@@ -1,21 +1,36 @@
+// src/database/seed.ts
 import { AppDataSource } from '../config/ormconfig';
-import { Item } from '../entities/Product';
+import { CourierCharge } from '../entities/CourierCharge';
+import { Product } from '../entities/Product';
+import { weightChargeData } from './seedData';
+import { itemData } from './seedData';
 
 export const seedDatabase = async () => {
-  const itemRepository = AppDataSource.getRepository(Item);
+  // Initialize the database connection
+  await AppDataSource.initialize();
 
-  const items = [
-    { name: 'Item 1', price: 100, weight: 200 },
-    { name: 'Item 2', price: 50, weight: 300 },
-    { name: 'Item 3', price: 120, weight: 150 },
-    { name: 'Item 4', price: 80, weight: 400 },
-    { name: 'Item 5', price: 90, weight: 250 },
-  ];
+  // Seed CourierCharge data
+  const courierChargesRepository = AppDataSource.getRepository(CourierCharge);
+  for (const data of weightChargeData) {
+    const charge = courierChargesRepository.create(data);
+    await courierChargesRepository.save(charge);
+  }
 
-  for (const itemData of items) {
-    const item = itemRepository.create(itemData);
-    await itemRepository.save(item);
+  // Seed Item data
+  const productRepository = AppDataSource.getRepository(Product);
+  for (const data of itemData) {
+    const item = productRepository.create(data);
+    await productRepository.save(item);
   }
 
   console.log('Database seeded successfully!');
 };
+
+// Run the seed function
+seedDatabase()
+  .catch((error) => {
+    console.error('Error seeding database:', error);
+  })
+  .finally(() => {
+    AppDataSource.destroy();
+  });

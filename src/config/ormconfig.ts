@@ -11,5 +11,5 @@ export const AppDataSource = new DataSource({
   synchronize: false, // Disable auto-sync to use migrations
   logging: true,
   entities: ['src/entities/**/*.ts'],
-  migrations: ['src/migrations/**/*.ts'],
+  migrations: ['src/database/migrations/**/*.ts'],
 });

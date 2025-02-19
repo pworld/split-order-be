@@ -1,10 +1,14 @@
 import { Product } from '../entities/Product';
-import { CourierCharges } from '../entities/CourierCharges';
 import { ProductRepository } from '../repositories/product.repository';
-import { splitItemsIntoPackages } from '../utils/package-splitting';
+import { CourierChargeRepository } from '../repositories/courier-charge.repository';
+import { Package, splitItemsIntoPackages } from '../utils/package-splitting';
 
-export class OrderService {
-  constructor(private ProductRepository: ProductRepository) {}
+export class ProductService {
+
+  constructor(
+    private ProductRepository: ProductRepository,
+    private CourierChargeRepository: CourierChargeRepository,
+  ) {}
 
   async getProducts(): Promise<Product[]> {
     return await this.ProductRepository.getProducts();
@@ -23,8 +27,15 @@ export class OrderService {
     return await this.ProductRepository.deleteProduct(id);
   }
 
-  async countCharges(selectedItemIds: number[]): Promise<CourierCharges[]> {
-    const allItems = await this.ProductRepository.getItemsByIds(selectedItemIds);
-    // return splitItemsIntoPackages(selectedItems);
+  async countCharges(selected_items_ids: number[]): Promise<Package[]> {
+
+    // get Courier Charges
+    const courier_charge = await this.CourierChargeRepository.getCourierCharges();
+
+    // Get Product from database
+    const all_items = await this.ProductRepository.getItemsByIds(selected_items_ids);
+    const selected_items = splitItemsIntoPackages(all_items);
+
+    return selected_items;
   }
 }

@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import { OrderService } from '../services/product.service';
+import { ProductService } from '../services/product.service';
 import { ProductRepositoryImpl } from '../repositories/product.repository';
+import { CourierChargeRepositoryImpl } from '../repositories/courier-charge.repository';
 
 const productRepository = new ProductRepositoryImpl();
-const productService = new OrderService(productRepository);
+const CourierChargeRepository = new CourierChargeRepositoryImpl();
+const productService = new ProductService(productRepository, CourierChargeRepository);
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
@@ -55,10 +57,10 @@ export const deleteProduct = async (req: Request, res: Response) => {
 };
 
 export const countCharges = async (req: Request, res: Response) => {
-  const { selectedItems } = req.body;
+  const { selected_items } = req.body;
 
   try {
-    const calculate = await productService.countCharges(selectedItems);
+    const calculate = await productService.countCharges(selected_items);
     res.json(calculate);
   } catch (error) {
     console.error('Error placing order:', error);

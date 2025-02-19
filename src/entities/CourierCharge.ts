@@ -1,14 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class CourierCharges {
+export class CourierCharge {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column('int')
-  weight: number;
+  low: number;
 
   @Column('int')
-  Charge: number;
+  high: number;
+
+  @Column('int')
+  charge: number;
   
 }
