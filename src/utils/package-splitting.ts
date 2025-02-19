@@ -4,6 +4,12 @@ export type Product = {
   weight: number;
 };
 
+export type weightCharge = {
+  low: number;
+  high: number;
+  charge: number;
+};
+
 export type Package = {
   items: Product[];
   totalPrice: number;
@@ -11,18 +17,10 @@ export type Package = {
   courierCharge: number;
 };
 
-// Define weight-based courier charges
-export const weightChargeData = [
-  { low: 0, high: 200, charge: 5 },
-  { low: 200, high: 500, charge: 10 },
-  { low: 500, high: 1000, charge: 15 },
-  { low: 1000, high: 5000, charge: 20 },
-];
-
 /**
  * Function to determine the courier charge based on weight.
  */
-function getCourierCharge(weight: number): number {
+function getCourierCharge(weight: number, weightChargeData: weightCharge[]): number {
   const charge_entry = weightChargeData.find(
     (entry) => weight >= entry.low && weight < entry.high
   );
@@ -32,7 +30,7 @@ function getCourierCharge(weight: number): number {
 /**
  * Function to split items into packages based on pricing and weight distribution.
  */
-function splitItemsIntoPackages(items: Product[]): Package[] {
+function splitItemsIntoPackages(items: Product[], weightChargeData: weightCharge[]): Package[] {
   // Calculate total order price
   const total_order_price = items.reduce((sum, item) => sum + item.price, 0);
 
@@ -44,7 +42,7 @@ function splitItemsIntoPackages(items: Product[]): Package[] {
         items,
         totalPrice: total_order_price,
         totalWeight: total_weight,
-        courierCharge: getCourierCharge(total_weight),
+        courierCharge: getCourierCharge(total_weight,weightChargeData),
       },
     ];
   }
@@ -59,7 +57,7 @@ function splitItemsIntoPackages(items: Product[]): Package[] {
   for (const item of items) {
     // If adding this item exceeds $250, start a new package
     if (current_package.totalPrice + item.price >= 250) {
-      current_package.courierCharge = getCourierCharge(current_package.totalWeight);
+      current_package.courierCharge = getCourierCharge(current_package.totalWeight, weightChargeData);
       packages.push(current_package);
       current_package = { items: [], totalPrice: 0, totalWeight: 0, courierCharge: 0 };
     }
@@ -72,13 +70,13 @@ function splitItemsIntoPackages(items: Product[]): Package[] {
 
   // Take care of the last package
   if (current_package.items.length > 0) {
-    current_package.courierCharge = getCourierCharge(current_package.totalWeight);
+    current_package.courierCharge = getCourierCharge(current_package.totalWeight, weightChargeData);
     packages.push(current_package);
   }
 
   // condition 3: While splitting, NO PACKAGE can have a total price equal or above $250
   // Balance the weight across packages
-  balanceWeights(packages);
+  balanceWeights(packages, weightChargeData);
 
   return packages;
 }
@@ -86,7 +84,7 @@ function splitItemsIntoPackages(items: Product[]): Package[] {
 /**
  * Helper function to balance weight across packages.
  */
-function balanceWeights(packages: Package[]): void {
+function balanceWeights(packages: Package[], weightChargeData: weightCharge[]): void {
   const total_weight = packages.reduce((sum, p) => sum + p.totalWeight, 0);
   const avg_weight = total_weight / packages.length;
 
@@ -112,8 +110,8 @@ function balanceWeights(packages: Package[]): void {
           lighter.totalWeight += transferableItem.weight;
           lighter.totalPrice += transferableItem.price;
 
-          heavier.courierCharge = getCourierCharge(heavier.totalWeight);
-          lighter.courierCharge = getCourierCharge(lighter.totalWeight);
+          heavier.courierCharge = getCourierCharge(heavier.totalWeight, weightChargeData);
+          lighter.courierCharge = getCourierCharge(lighter.totalWeight, weightChargeData);
 
           adjustments = true;
         }

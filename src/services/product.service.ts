@@ -14,13 +14,13 @@ export class ProductService {
     return await this.ProductRepository.getProducts();
   }
 
-  async setProduct(Product: Product): Promise<Product> {
-    return await this.ProductRepository.setProduct(Product);
+  async setProduct(product: Product): Promise<Product> {
+    return await this.ProductRepository.setProduct(product);
   }
 
-  async updateProduct(Product: Product): Promise<Product | null> {
-    const id = Product.id
-    return await this.ProductRepository.updateProduct(id, Product);
+  async updateProduct(product: Product): Promise<Product | null> {
+    const id = product.id
+    return await this.ProductRepository.updateProduct(id, product);
   }
 
   async deleteProduct(id:number): Promise<Boolean> {
@@ -33,8 +33,9 @@ export class ProductService {
     const courier_charge = await this.CourierChargeRepository.getCourierCharges();
 
     // Get Product from database
-    const all_items = await this.ProductRepository.getItemsByIds(selected_items_ids);
-    const selected_items = splitItemsIntoPackages(all_items);
+    const all_items = await this.ProductRepository.getItemsByIds(selected_items_ids, );
+
+    const selected_items = splitItemsIntoPackages(all_items, courier_charge);
 
     return selected_items;
   }

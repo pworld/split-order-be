@@ -44,10 +44,13 @@ export const updateProduct = async (req: Request, res: Response) => {
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
-  const { id } = req.body;
-
+  const { id } = req.params;
+  console.log("----------------------");
+  console.log(req.params);
+  console.log(id);
+  console.log("----------------------");
   try {
-    const is_deleted = await productService.deleteProduct(id);
+    const is_deleted = await productService.deleteProduct(parseInt(id));
     res.json(is_deleted);
   } catch (error) {
     console.error('Error placing order:', error);
@@ -57,10 +60,10 @@ export const deleteProduct = async (req: Request, res: Response) => {
 };
 
 export const countCharges = async (req: Request, res: Response) => {
-  const { selected_items } = req.body;
+  const { selected_items_ids } = req.body;
 
   try {
-    const calculate = await productService.countCharges(selected_items);
+    const calculate = await productService.countCharges(selected_items_ids);
     res.json(calculate);
   } catch (error) {
     console.error('Error placing order:', error);
